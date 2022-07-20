@@ -1,8 +1,9 @@
 import { observable } from 'mobx';
-import { liftState } from './lift-tracking/state';
+import { lift } from './lift-tracking/state';
 
 export type State = {
-  lift: liftState,
+  lift: lift,
+  lifts: lift[],
 };
 
 const AppState: State = observable<State>({
@@ -10,6 +11,7 @@ const AppState: State = observable<State>({
     exercise: '',
     weight: 0,
   },
+  lifts: [],
 });
 
 export default AppState;

@@ -1,4 +1,4 @@
-export type liftState = {
+export type lift = {
   exercise: string,
   weight: number,
 }

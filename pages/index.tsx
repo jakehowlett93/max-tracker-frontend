@@ -1,4 +1,5 @@
 import type { NextPage } from 'next'
+import { useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { computed } from 'mobx';
 import {
@@ -13,9 +14,22 @@ import getExercise from '../features/lift-tracking/business/selectors/getExercis
 import setExercise from '../features/lift-tracking/business/actions/setExercise';
 import getWeight from '../features/lift-tracking/business/selectors/getWeight';
 import setWeight from '../features/lift-tracking/business/actions/setWeight';
+import getLifts from '../features/lift-tracking/business/selectors/getLifts';
+import setLifts from '../features/lift-tracking/business/actions/setLifts';
 import styles from '../styles/Home.module.css'
 
 const Home: NextPage = observer(() => {
+
+  async function fetchLifts() {
+    const request = await fetch("http://max-tracker.test:88/api/lifts")
+    const data = await request.json()
+    setLifts(data)
+  }
+
+  useEffect(() => {
+    fetchLifts();
+  }, [])
+  const lifts = getLifts();
   const exercise = computed(() =>
     toOptions(getExercise())).get();
   const weight = getWeight();
@@ -24,6 +38,10 @@ const Home: NextPage = observer(() => {
   { label: 'Deadlift', value: 'Deadlift' },
   { label: 'Squat', value: 'Squat' },
   ];
+
+  // TODO: replace with actual type
+  const previousLifts = getLifts();
+
   return (
     <Card>
       <Container>
@@ -34,6 +52,7 @@ const Home: NextPage = observer(() => {
           <Col xs={2}>
             <TextInput value={weight.toString()} label="Weight (kg)" placeholder="kg" onChange={setWeight} />
           </Col>
+          {previousLifts.map((lift) => <div key={lift.exercise + lift.weight}>{lift.exercise}</div>)}
         </Row>
       </Container>
     </Card>
