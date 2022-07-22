@@ -1,5 +1,5 @@
 import type { NextPage } from 'next'
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { observer } from 'mobx-react';
 import { computed } from 'mobx';
 import {
@@ -7,6 +7,7 @@ import {
   Col,
   Container,
   Row,
+  Button
 } from 'react-bootstrap';
 import KeywordInput, { toOptions } from '../features/lift-tracking/components/KeywordInput';
 import TextInput from '../features/lift-tracking/components/TextInput';
@@ -16,9 +17,13 @@ import getWeight from '../features/lift-tracking/business/selectors/getWeight';
 import setWeight from '../features/lift-tracking/business/actions/setWeight';
 import getLifts from '../features/lift-tracking/business/selectors/getLifts';
 import setLifts from '../features/lift-tracking/business/actions/setLifts';
+import ResponseToast from './components/responseToast';
 import styles from '../styles/Home.module.css'
 
 const Home: NextPage = observer(() => {
+
+  const [isFetching, setIsFetching] = useState(true);
+  const [showToast, setShowToast] = useState(false);
 
   async function fetchLifts() {
     const request = await fetch("http://max-tracker.test:88/api/lifts")
@@ -28,33 +33,51 @@ const Home: NextPage = observer(() => {
 
   useEffect(() => {
     fetchLifts();
-  }, [])
-  const lifts = getLifts();
+    setIsFetching(false);
+  }, [isFetching])
   const exercise = computed(() =>
     toOptions(getExercise())).get();
   const weight = getWeight();
-  const tempOptions = [
-  { label: 'Benchpress', value: 'Benchpress' },
-  { label: 'Deadlift', value: 'Deadlift' },
-  { label: 'Squat', value: 'Squat' },
-  ];
-
-  // TODO: replace with actual type
   const previousLifts = getLifts();
+  const exerciseOptions = [
+    { label: 'Benchpress', value: 'Benchpress' },
+    { label: 'Deadlift', value: 'Deadlift' },
+    { label: 'Squat', value: 'Squat' },
+    ];
+
+  const handleTrackClick = async () => {
+    const response = await fetch('http://max-tracker.test:88/api/lifts', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({"exercise": getExercise(), "weight": getWeight()}),
+    });
+    if (response.status === 201) {
+      setShowToast(true);
+      setIsFetching(true);
+    } else {
+      alert(response.status)
+    }
+  }
 
   return (
     <Card>
       <Container>
         <Row>
-          <Col xs={5}>
-            <KeywordInput value={exercise} label="Exercise" placeholder="Choose an exercise" options={tempOptions} onChange={setExercise} />
+          <Col xs={5} className="p-1">
+            <KeywordInput value={exercise}  label="Exercise" placeholder="Choose an exercise" options={exerciseOptions} onChange={setExercise} />
           </Col>
-          <Col xs={2}>
+          <Col xs={2} className="p-1">
             <TextInput value={weight.toString()} label="Weight (kg)" placeholder="kg" onChange={setWeight} />
           </Col>
-          {previousLifts.map((lift) => <div key={lift.exercise + lift.weight}>{lift.exercise}</div>)}
+          <Col xs={2} className="p-1">
+          <Button variant="outline-primary" onClick={handleTrackClick}>Track</Button>
+          </Col>
         </Row>
       </Container>
+      {previousLifts.map((lift) => <div key={lift.exercise + lift.weight}>{lift.exercise}</div>)}
+      <ResponseToast showToast={showToast} setShowToast={setShowToast} />
     </Card>
   );
 })

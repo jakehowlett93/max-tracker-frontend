@@ -2,6 +2,7 @@ import React from 'react';
 import { InputGroup } from 'react-bootstrap';
 import Select from 'react-select';
 import { Option } from '../state';
+import styles from '../../../styles/Home.module.css';
 
 export const toOptions = (input: string): Option => ({ value: input, label: input });
 
@@ -24,9 +25,8 @@ const KeywordInput = ({
   <InputGroup>
     <InputGroup.Text>{label}</InputGroup.Text>
     <Select
-      className="form-control p-0 "
+      className={`form-control p-0 square ${styles.noBorder}`}
       date-testid="keyword-input-label"
-      classNamePrefix="form-control"
       placeholder={placeholder}
       options={options}
       value={value}
