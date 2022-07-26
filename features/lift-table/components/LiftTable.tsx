@@ -1,35 +1,50 @@
 import react, { useMemo, useEffect, useState } from 'react';
 import { useTable, Column } from 'react-table';
+import { lift } from '../../lift-tracking/state';
 
 type Props = {
-  previousLifts: {
-    exercise: string,
-    weight: string
-  }[]
+  data: lift[],
+  columns: any
 }
 
-const LiftTable = ({ previousLifts }: Props) => {
+const LiftTable = (props: Props) => {
 
-  const data = previousLifts.map((lift) => {
-    return {col1: lift.exercise, col2: lift.weight};
-  })
-
-  const columns: Column<{col1: string; col2: string;}>[] = useMemo(
-    () => [
-      {
-        Header: 'Exercise',
-        accessor: 'col1',
-      },
-      {
-        Header: 'Weight',
-        accessor: 'col2',
-      },
-    ], []
+  const data = useMemo(() => 
+    props.data, [props.data]
+  )
+  
+  const columns = useMemo(() =>
+    props.columns, [props.columns] 
   )
 
-  const previousLiftsTable = useTable({ columns, data });
+const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow }= useTable({ columns, data });
   return (
-    <table>
+    <table {...getTableProps()}>
+      <thead>
+        {headerGroups.map((headerGroup, index) => (
+          // eslint-disable-next-line react/jsx-key
+          <tr {...headerGroup.getHeaderGroupProps()}>
+            {headerGroup.headers.map((column, index) => (
+              // eslint-disable-next-line react/jsx-key
+              <th {...column.getHeaderProps()}>{column.render("Header")}</th>
+            ))}
+          </tr>
+        ))}
+      </thead>
+      <tbody {...getTableBodyProps()}>
+        {rows.map((row, i) => {
+          prepareRow(row);
+          return (
+            // eslint-disable-next-line react/jsx-key
+            <tr {...row.getRowProps()}>
+              {row.cells.map((cell) => {
+                // eslint-disable-next-line react/jsx-key
+                return <td {...cell.getCellProps()}>{cell.render("Cell")}</td>;
+              })}
+            </tr>
+          );
+        })}
+      </tbody>
     </table>
   )
 }

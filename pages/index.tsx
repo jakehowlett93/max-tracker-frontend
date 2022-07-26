@@ -40,13 +40,18 @@ const Home: NextPage = observer(() => {
   const exercise = computed(() =>
     toOptions(getExercise())).get();
   const weight = getWeight();
-  
+  const previousLifts = getLifts();
   const exerciseOptions = [
     { label: 'Benchpress', value: 'Benchpress' },
     { label: 'Deadlift', value: 'Deadlift' },
     { label: 'Squat', value: 'Squat' },
     ];
-
+  const columns = exerciseOptions.map((option) => {
+    return {
+      Header: option.value,
+      accessor: option.value,
+    }
+  })
   const handleTrackClick = async () => {
     const response = await fetch('http://max-tracker.test:88/api/lifts', {
       method: 'POST',
@@ -79,7 +84,7 @@ const Home: NextPage = observer(() => {
         </Row>
         <Row>
           <Col xs={12}>
-            <LiftTable previousLifts={getLifts()} />
+            <LiftTable data={previousLifts} columns={columns} />
           </Col>
         </Row>
       </Container>
