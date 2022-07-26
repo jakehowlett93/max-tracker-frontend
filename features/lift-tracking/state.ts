@@ -1,6 +1,6 @@
 export type lift = {
   exercise: string,
-  weight: number,
+  weight: string,
 }
 
 export type Option = {

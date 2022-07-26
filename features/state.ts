@@ -9,7 +9,7 @@ export type State = {
 const AppState: State = observable<State>({
   lift: {
     exercise: '',
-    weight: 0,
+    weight: '',
   },
   lifts: [],
 });

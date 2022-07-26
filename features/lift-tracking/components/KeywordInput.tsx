@@ -25,7 +25,7 @@ const KeywordInput = ({
   <InputGroup>
     <InputGroup.Text>{label}</InputGroup.Text>
     <Select
-      className={`form-control p-0 square ${styles.noBorder}`}
+      className={`form-control p-0 ${styles.noBorder}`}
       date-testid="keyword-input-label"
       placeholder={placeholder}
       options={options}

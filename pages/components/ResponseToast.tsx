@@ -1,7 +1,12 @@
 import React from 'react';
 import { Toast, ToastContainer } from 'react-bootstrap';
 
-function ResponseToast({showToast, setShowToast}) {
+type Props = {
+  showToast: boolean,
+  setShowToast: (input: boolean) => void;
+}
+
+function ResponseToast({showToast, setShowToast}: Props) {
 
   return (
     <ToastContainer position="bottom-end">

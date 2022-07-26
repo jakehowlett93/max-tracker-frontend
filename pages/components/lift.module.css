@@ -1,0 +1,12 @@
+.liftCard {
+  width: 200px;
+}
+
+.lift {
+  display: flex;
+  flex-direction: row;
+}
+
+.exercise {
+  width: 100px;
+}

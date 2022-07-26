@@ -15,15 +15,16 @@ import getExercise from '../features/lift-tracking/business/selectors/getExercis
 import setExercise from '../features/lift-tracking/business/actions/setExercise';
 import getWeight from '../features/lift-tracking/business/selectors/getWeight';
 import setWeight from '../features/lift-tracking/business/actions/setWeight';
-import getLifts from '../features/lift-tracking/business/selectors/getLifts';
 import setLifts from '../features/lift-tracking/business/actions/setLifts';
-import ResponseToast from './components/responseToast';
+import getLifts from '../features/lift-tracking/business/selectors/getLifts';
+import ResponseToast from './components/ResponseToast';
+import Lift from './components/Lift';
+import LiftTable from '../features/lift-table/components/LiftTable';
 import styles from '../styles/Home.module.css'
 
 const Home: NextPage = observer(() => {
-
-  const [isFetching, setIsFetching] = useState(true);
   const [showToast, setShowToast] = useState(false);
+  const [isFetching, setIsFetching] = useState(true);
 
   async function fetchLifts() {
     const request = await fetch("http://max-tracker.test:88/api/lifts")
@@ -35,10 +36,11 @@ const Home: NextPage = observer(() => {
     fetchLifts();
     setIsFetching(false);
   }, [isFetching])
+
   const exercise = computed(() =>
     toOptions(getExercise())).get();
   const weight = getWeight();
-  const previousLifts = getLifts();
+  
   const exerciseOptions = [
     { label: 'Benchpress', value: 'Benchpress' },
     { label: 'Deadlift', value: 'Deadlift' },
@@ -75,8 +77,13 @@ const Home: NextPage = observer(() => {
           <Button variant="outline-primary" onClick={handleTrackClick}>Track</Button>
           </Col>
         </Row>
+        <Row>
+          <Col xs={12}>
+            <LiftTable previousLifts={getLifts()} />
+          </Col>
+        </Row>
       </Container>
-      {previousLifts.map((lift) => <div key={lift.exercise + lift.weight}>{lift.exercise}</div>)}
+      
       <ResponseToast showToast={showToast} setShowToast={setShowToast} />
     </Card>
   );
