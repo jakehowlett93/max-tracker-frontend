@@ -27,7 +27,7 @@ const Home: NextPage = observer(() => {
   const [isFetching, setIsFetching] = useState(true);
 
   async function fetchLifts() {
-    const request = await fetch("http://max-tracker.test:88/api/lifts")
+    const request = await fetch("http://max-tracker.test:80/api/lifts")
     const data = await request.json()
     setLifts(data)
   }
@@ -46,14 +46,18 @@ const Home: NextPage = observer(() => {
     { label: 'Deadlift', value: 'Deadlift' },
     { label: 'Squat', value: 'Squat' },
     ];
-  const columns = exerciseOptions.map((option) => {
-    return {
-      Header: option.value,
-      accessor: option.value,
-    }
-  })
+  const columns = [
+    {
+      Header: 'Exercise',
+      accessor: 'exercise',
+    },
+    {
+      Header: 'Weight',
+      accessor: 'weight'
+    },
+  ]
   const handleTrackClick = async () => {
-    const response = await fetch('http://max-tracker.test:88/api/lifts', {
+    const response = await fetch('http://max-tracker.test:80/api/lifts', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
