@@ -21,10 +21,12 @@ import ResponseToast from './components/ResponseToast';
 import Lift from './components/Lift';
 import LiftTable from '../features/lift-table/components/LiftTable';
 import styles from '../styles/Home.module.css'
+import Tab from './components/Tab';
 
 const Home: NextPage = observer(() => {
   const [showToast, setShowToast] = useState(false);
   const [isFetching, setIsFetching] = useState(true);
+  const [currentTable, setCurrentTable] = useState('Benchpress');
 
   async function fetchLifts() {
     const request = await fetch("http://max-tracker.test:80/api/lifts")
@@ -40,12 +42,15 @@ const Home: NextPage = observer(() => {
   const exercise = computed(() =>
     toOptions(getExercise())).get();
   const weight = getWeight();
-  const previousLifts = getLifts();
+  const previousLifts = getLifts().filter((lift) => lift.exercise === currentTable);
   const exerciseOptions = [
     { label: 'Benchpress', value: 'Benchpress' },
     { label: 'Deadlift', value: 'Deadlift' },
     { label: 'Squat', value: 'Squat' },
     ];
+  const tabElements = exerciseOptions.map((exercise) => {
+    return ( <Tab key={exercise.label} label={exercise.label} setCurrentTable={setCurrentTable} /> )
+  })
   const columns = [
     {
       Header: 'Exercise',
@@ -84,6 +89,13 @@ const Home: NextPage = observer(() => {
           </Col>
           <Col xs={2} className="p-1">
           <Button variant="outline-primary" onClick={handleTrackClick}>Track</Button>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <div className="d-flex">
+             {tabElements}
+            </div>
           </Col>
         </Row>
         <Row>
